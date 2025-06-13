@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+    --color-accent: #847a71;
+    --color-text-accent: #644f4a;
+    --color-light: #f8f8f6;
+    --color-dark-blue: #2d343a;
+    --color-light-gray: #90989b;
+    --color-dark-border: #0f181f;
+    --font-sans: "PT Sans", "sans";
+    --font-serif: "Anton", "serif";
+    --font-alumini: "Alumni", "serif";
+    --breakpoint-xs: 22rem;
+    --breakpoint-lg: 74rem;
+    --breakpoint-3xl: 110rem;
+}
+
+@font-face {
+    font-family: "PT Sans";
+    font-style: normal;
+    font-weight: 400;
+    src: url("../fonts/PTSans/PTSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "PT Sans";
+    font-style: normal;
+    font-weight: 700;
+    src: url("../fonts/PTSans/PTSans-Bold.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Anton";
+    font-style: normal;
+    src: url("../fonts/Anton/Anton.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Alumni";
+    font-style: normal;
+    font-weight: 700;
+    src: url("../fonts/Alumni/Alumni.ttf") format("truetype");
+}
