@@ -2,6 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import cancel from '@/assets/images/icons/cancel.svg'
@@ -62,9 +63,21 @@ const blockUser = async (userId) => {
             if (index !== -1) {
                 users.value[index].is_active = false;
             }
-            alert('Пользователь успешно заблокирован');
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Пользователь успешно заблокирован!",
+                showConfirmButton: false,
+                timer: 2000
+            });
         } else {
-            alert('Не удалось заблокировать пользователя');
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "Не удалось заблокировать пользователя",
+                showConfirmButton: false,
+                timer: 2000
+            });
         }
     } catch (error) {
         console.error(error);
@@ -168,7 +181,7 @@ const blockUser = async (userId) => {
                                 <p>{{ userItem.phone }}</p>
                             </td>
                             <td class="px-6 py-2 whitespace-nowrap text-sm">
-                                <p>{{ userItem.company.name }}</p>
+                                <p>{{ userItem.company ? userItem.company.name : 'Отсутствует' }}</p>
                             </td>
                             <td class="px-6 py-2 whitespace-nowrap text-sm text-light-gray">
                                 <p v-if="!userItem.is_active" class="text-red-500">Заблокирован</p>
@@ -179,31 +192,24 @@ const blockUser = async (userId) => {
                     </tbody>
                 </table>
                 <div class="grid grid-cols-3 max-sm:grid-cols-1 gap-4 xl:hidden w-full">
-                    <div class="flex flex-col items-start justify-center bg-light p-4 rounded-2xl">
+                    <div v-for="userItem in filteredUsers" :key="userItem.id"
+                        class="flex flex-col items-start justify-center bg-light p-4 rounded-2xl">
                         <p class="font-semibold">ID</p>
-                        <p>77605</p>
-                        <p class="font-semibold">Место загрузки</p>
-                        <p>RU. Москва</p>
-                        <p>18.02.25</p>
-                        <p class="font-semibold">Место рагрузки</p>
-                        <p>BY. Минск</p>
-                        <p>23.05.25</p>
-                        <p class="font-semibold">Информация о грузе</p>
-                        <p>22т. 92м, Отдельная машина</p>
-                        <p class="font-semibold">Цена</p>
-                        <p>400000 RUB</p>
-                        <p>Без НДС</p>
-                        <p>Без Предоплат</p>
-                        <p class="font-semibold">Цена</p>
-                        <p class="font-semibold">Заказчик</p>
-                        <p>ООО Технопарк</p>
-                        <p>+7(777)777 77-77</p>
-                        <p class="font-semibold">Заявка</p>
-                        <select class="border-2 border-light-gray rounded-lg px-3 py-1 cursor-pointer"
-                            name="application" id="application">
-                            <option value="Доставлено">Доставлено</option>
-                            <option value="В пути">В пути</option>
-                        </select>
+                        <p>{{ userItem.id }}</p>
+                        <p class="font-semibold">Фамилия</p>
+                        <p>{{ userItem.surname }}</p>
+                        <p class="font-semibold">Имя</p>
+                        <p>{{ userItem.name }}</p>
+                        <p class="font-semibold">Email</p>
+                        <p>{{ userItem.email }}</p>
+                        <p class="font-semibold">Телефон</p>
+                        <p>{{ userItem.phone }}</p>
+                        <p class="font-semibold">Компания</p>
+                        <p>{{ userItem.company ? userItem.company.name : 'Отсутствует' }}</p>
+                        <p class="font-semibold">Управление</p>
+                        <p v-if="!userItem.is_active" class="text-red-500">Заблокирован</p>
+                        <button v-if="user?.is_admin && userItem.is_active" @click="blockUser(userItem.id)"
+                            class="px-4 py-1.5 text-dark-blue border border-dark-blue outline-none rounded-2xl cursor-pointer">Заблокировать</button>
                     </div>
 
                 </div>

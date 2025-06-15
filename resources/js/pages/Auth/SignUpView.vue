@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { useForm, usePage } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import addImage from '@/assets/images/icons/add_image.svg'
@@ -105,12 +106,24 @@ const submitForm = () => {
     const input = userInput.value.trim().toLowerCase()
 
     if (!input) {
-        alert('Пожалуйста, введите капчу')
+        Swal.fire({
+            position: "top-end",
+            icon: "info",
+            title: "Пожалуйста, введите капчу",
+            showConfirmButton: false,
+            timer: 1500
+        });
         return
     }
 
     if (input !== captchaCode.toLowerCase()) {
-        alert('Неверный код капчи!')
+        Swal.fire({
+            position: "top-end",
+            icon: "error",
+            title: "Неверный код капчи!",
+            showConfirmButton: false,
+            timer: 1500
+        });
         refreshCaptcha()
         return
     }
@@ -138,10 +151,22 @@ const submitForm = () => {
         data: data,
         preserveScroll: true,
         onSuccess: () => {
-            alert('Регистрация прошла успешно!')
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Регистрация прошла успешно!",
+                showConfirmButton: false,
+                timer: 1500
+            });
         },
-        onError: (errors) => {
-            console.log(errors)
+        onError: () => {
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "Ошибка ввода данных, проверьте правильность введенных данных",
+                showConfirmButton: false,
+                timer: 1500
+            });
         },
     })
 }
@@ -155,7 +180,7 @@ const submitForm = () => {
                 class="bg-white rounded-2xl shadow-[7px_7px_5px_#00000040] h-auto flex justify-center items-center my-12 p-8 max-lg:p-4 w-full">
                 <div class="flex justify-center items-center flex-col gap-6 w-full">
                     <h1 class="font-alumini text-3xl tracking-wider">Регистрация</h1>
-                    <form @submit.prevent="submitForm" class="flex gap-12 w-full items-center">
+                    <form @submit.prevent="submitForm" class="flex max-sm:flex-col gap-12 w-full items-center">
                         <div class="flex flex-col justify-start items-center gap-3">
                             <div
                                 class="relative size-16 rounded-full overflow-hidden flex justify-center items-center border-2 transition-all duration-500 ease-in-out hover:border-accent border-black cursor-pointer">

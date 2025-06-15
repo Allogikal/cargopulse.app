@@ -24,11 +24,9 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
         if (!Auth::attempt($request->only('email', 'password'), $request->has('remember'))) {
-            return Redirect::back();
+            return Redirect::back()->withErrors(['email' => 'Неверный email или пароль']);
         }
-
         $user = Auth::user();
         if (!$user->is_active) {
             Auth::logout();
@@ -38,9 +36,10 @@ class AuthController extends Controller
         session(['sanctum_token' => $token]);
 
         return Redirect::route('profile')->with([
+            'success' => 'Вы успешно вошли в систему.',
             'auth' => [
                 'user' => Auth::user()->load('company'),
-                ]
+            ]
         ]);
     }
 
@@ -92,7 +91,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::route('login');
+        return Redirect::route('login')->with(['success' => 'Вы успешно вышли из системы']);
     }
 
     public function block(User $user)

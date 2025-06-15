@@ -2,6 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { useForm, usePage } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import placeholder from '@/assets/images/placeholder.webp'
@@ -22,7 +23,18 @@ const form = useForm({
 const user = computed(() => usePage().props.auth.user)
 
 const handleLogout = () => {
-    form.post(route('logout'))
+    form.post(route('logout'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Вы успешно вышли из системы",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
 }
 
 const isEditing = ref(false)
@@ -38,14 +50,27 @@ const startEditing = () => {
 
 const saveChanges = () => {
     if (!form.name || !form.surname || !form.email || !form.phone) {
-        alert('Заполните все обязательные поля')
+        Swal.fire({
+            position: "top-end",
+            icon: "error",
+            title: "Заполните все обязательные поля",
+            showConfirmButton: false,
+            timer: 2500
+        });
         return
     }
 
     form.put(route('profile.update'), {
         preserveScroll: true,
         onSuccess: () => {
-            window.location.reload();
+            Swal.fire({
+                position: "top-end",
+                icon: "info",
+                title: "Профиль отредактирован!",
+                showConfirmButton: false,
+                timer: 2500
+            });
+            window.location.reload()
         },
     })
 }
@@ -84,9 +109,9 @@ const saveChanges = () => {
                         </div>
                         <div class="flex flex-col gap-px whitespace-nowrap items-start max-sm:items-center">
                             <p class="text-[#8287AB] text-sm">Компания</p>
-                            <div class="flex gap-2 items-end">
-                                <p class="text-dark-blue text-sm">{{ user?.company.name }}</p>
-                                <a :href="route('my.company')"
+                            <div v-if="user?.company?.name" class="flex gap-2 items-end">
+                                <p class="text-dark-blue text-sm">{{ user?.company?.name ? user?.company?.name : 'Отсутствует' }}</p>
+                                <a v-if="!user?.company?.name" :href="route('my.company')"
                                     class="p-2 bg-[#EFE9FF] shadow-xl shadow-black/25 rounded-lg hover:scale-90 transition-all duration-500 ease-in-out">
                                     <img class="size-4" :src="external" alt="external" />
                                 </a>

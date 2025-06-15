@@ -37,5 +37,17 @@ class UsersTableSeeder extends Seeder
             'position' => 'Грузоперевозчик',
             'is_admin' => false,
         ]);
+
+        User::create([
+            'surname' => 'Смирнова',
+            'name' => 'Екатерина',
+            'email' => 'dispatcher@example.com',
+            'phone' => '+79009876543',
+            'company_id' => 3,
+            'info' => 'Диспетчер с опытом работы более 4 лет. Занимаюсь распределением заказов между водителями, контролем маршрутов и взаимодействием с клиентами. Использую систему для отслеживания статуса перевозок в режиме реального времени.',
+            'password' => Hash::make('dispatcher123'),
+            'position' => 'Диспетчер',
+            'is_admin' => false,
+        ]);
     }
 }

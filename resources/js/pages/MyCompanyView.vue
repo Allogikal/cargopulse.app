@@ -3,6 +3,7 @@ import AddEmployeeModal from '../components/modals/AddEmployeeModal.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { ref, computed } from 'vue'
 import { useForm, usePage } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import logout from '@/assets/images/icons/logout.svg'
@@ -13,7 +14,6 @@ import browse from '@/assets/images/icons/browse.svg'
 import phone from '@/assets/images/icons/phone.svg'
 import homeIcon from '@/assets/images/icons/home.svg'
 import email from '@/assets/images/icons/email.svg'
-import edit from '@/assets/images/icons/edit.svg'
 import placeholder from '@/assets/images/placeholder.webp'
 import checkmark from '@/assets/images/icons/checkmark.svg'
 
@@ -31,8 +31,17 @@ const handleSubmit = (userId) => {
     }
     axios.post(route('add.employee'), payload)
         .then(() => {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Добавлен новый сотрудник!",
+                showConfirmButton: false,
+                timer: 2000
+            });
             closeModal()
-            fetchEmployees()
+            setTimeout(() => {
+                window.location.reload()
+            }, 1800)
         })
         .catch((error) => {
             console.error(error)
@@ -43,12 +52,19 @@ const form = useForm()
 const user = computed(() => usePage().props.auth.user)
 const companyUsers = computed(() => usePage().props.users)
 const unassignedUsers = computed(() => usePage().props.unassignedUsers || [])
-const fetchEmployees = () => {
-    window.location.reload()
-}
-
 const handleLogout = () => {
-    form.post(route('logout'))
+    form.post(route('logout'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Вы успешно вышли из системы",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
 }
 
 const copiedText = ref(null)
@@ -83,25 +99,25 @@ const copyToClipboard = (text) => {
                         :src="user.avatar ? '/storage/' + user.avatar : placeholder" alt="placeholder" />
                     <div class="flex flex-col gap-8">
                         <div class="flex max-sm:flex-wrap max-sm:items-start gap-4 items-center max-sm:justify-center">
-                            <h2 class="text-2xl font-bold text-dark-blue">{{ user?.company.name }}</h2>
+                            <h2 class="text-2xl font-bold text-dark-blue">{{ user?.company?.name }}</h2>
                             <div
                                 class="text-center text-sm shadow-xl shadow-black/25 py-2 px-6 rounded-xl bg-[#EEF0FF] text-light-gray">
-                                ID 023{{ user?.company.id }}</div>
+                                ID 023{{ user?.company?.id }}</div>
                         </div>
                         <div class="flex max-sm:flex-wrap items-center max-sm:justify-center gap-12 max-sm:gap-6">
                             <div class="flex flex-col gap-px whitespace-nowrap max-sm:items-center">
                                 <p class="text-[#8287AB] text-sm">ИНН</p>
-                                <p class="text-dark-blue text-sm">{{ user?.company.inn }}</p>
+                                <p class="text-dark-blue text-sm">{{ user?.company?.inn }}</p>
                             </div>
                             <div class="flex flex-col gap-px whitespace-nowrap max-sm:items-center">
                                 <p class="text-[#8287AB] text-sm">Деятельность</p>
-                                <p class="text-dark-blue text-sm">{{ user?.company.activity }}</p>
+                                <p class="text-dark-blue text-sm">{{ user?.company?.activity }}</p>
                             </div>
                             <div class="flex flex-col gap-px whitespace-nowrap max-sm:items-center">
                                 <p class="text-[#BEC2DA] text-sm">Рейтинг</p>
                                 <div class="text-[#BEC2DA] text-xl font-bold flex gap-2 items-center">
                                     <img class="size-6" :src="rate" alt="rate" />
-                                    <p>{{ user?.company.rate }}%</p>
+                                    <p>{{ user?.company?.rate }}%</p>
                                 </div>
                             </div>
                         </div>
@@ -119,11 +135,11 @@ const copyToClipboard = (text) => {
                                     :src="email" alt="email" />
                                 <div class="flex flex-col gap-px whitespace-nowrap justify-end">
                                     <p class="text-[#8287AB] text-sm">Email</p>
-                                    <a :href="`mailto:${user?.company.email}`" class="text-dark-blue text-sm">{{
-                                        user?.company.email }}</a>
+                                    <a :href="`mailto:${user?.company?.email}`" class="text-dark-blue text-sm">{{
+                                        user?.company?.email }}</a>
                                 </div>
-                                <img @click.prevent="copyToClipboard(user?.company.email)" class="size-5 cursor-pointer"
-                                    :src="copiedText === user?.company.email ? checkmark : copy" alt="copy" />
+                                <img @click.prevent="copyToClipboard(user?.company?.email)" class="size-5 cursor-pointer"
+                                    :src="copiedText === user?.company?.email ? checkmark : copy" alt="copy" />
                             </div>
                             <div class="flex items-end gap-3">
                                 <img class="bg-[#EEF0FF] p-3 flex justify-center items-center size-12 h-auto rounded-xl"
@@ -138,11 +154,11 @@ const copyToClipboard = (text) => {
                                     :src="phone" alt="phone" />
                                 <div class="flex flex-col gap-px whitespace-nowrap justify-end">
                                     <p class="text-[#8287AB] text-sm">Телефон</p>
-                                    <a :href="`tel:${user?.company.phone}`" class="text-dark-blue text-sm">{{
-                                        user?.company.phone }}</a>
+                                    <a :href="`tel:${user?.company?.phone}`" class="text-dark-blue text-sm">{{
+                                        user?.company?.phone }}</a>
                                 </div>
-                                <img @click.prevent="copyToClipboard(user?.company.phone)" class="size-5 cursor-pointer"
-                                    :src="copiedText === user?.company.phone ? checkmark : copy" alt="copy" />
+                                <img @click.prevent="copyToClipboard(user?.company?.phone)" class="size-5 cursor-pointer"
+                                    :src="copiedText === user?.company?.phone ? checkmark : copy" alt="copy" />
                             </div>
                         </div>
                         <div class="flex justify-between">
@@ -155,8 +171,8 @@ const copyToClipboard = (text) => {
                                 <div class="flex flex-col gap-px justify-end">
                                     <p class="text-[#8287AB] text-sm">Страна, город</p>
                                     <p class="text-dark-blue text-sm">{{
-                                        user?.company.country }}, {{
-                                        user?.company.city }}
+                                        user?.company?.country }}, {{
+                                            user?.company?.city }}
                                     </p>
                                 </div>
                             </div>
@@ -166,7 +182,7 @@ const copyToClipboard = (text) => {
                                 <div class="flex flex-col gap-px justify-end">
                                     <p class="text-[#8287AB] text-sm">Адрес регистрации</p>
                                     <p class="text-dark-blue text-sm">{{
-                                        user?.company.registration_address }}</p>
+                                        user?.company?.registration_address }}</p>
                                 </div>
                             </div>
                             <div class="flex items-end gap-3">
@@ -175,7 +191,7 @@ const copyToClipboard = (text) => {
                                 <div class="flex flex-col gap-px justify-end">
                                     <p class="text-[#8287AB] text-sm">Почтовый адрес</p>
                                     <p class="text-dark-blue text-sm">{{
-                                        user?.company.postal_address }}</p>
+                                        user?.company?.postal_address }}</p>
                                 </div>
                             </div>
                         </div>
@@ -187,7 +203,7 @@ const copyToClipboard = (text) => {
                         <a :href="route('cargos')"
                             class="rounded-2xl border-l-2 border-accent text-accent bg-[#EEF0FF] flex flex-col items-start justify-end p-6 max-w-2/3 min-h-[140px] hover:scale-105 transition-all duration-500 ease-in-out">
                             <p class="font-bold text-2xl">{{
-                                user?.company.cargos.length }}</p>
+                                user?.company?.cargos.length }}</p>
                             <p class="font-normal text-sm">грузов</p>
                         </a>
                         <div class="flex justify-between">
@@ -197,17 +213,17 @@ const copyToClipboard = (text) => {
                             <div class="flex flex-col gap-px whitespace-nowrap justify-end">
                                 <p class="text-[#8287AB] text-sm">Месяц</p>
                                 <p class="text-dark-blue text-sm">{{
-                                    user?.company.cargos_statistics_month }}</p>
+                                    user?.company?.cargos_statistics_month }}</p>
                             </div>
                             <div class="flex flex-col gap-px whitespace-nowrap justify-end">
                                 <p class="text-[#8287AB] text-sm">Год</p>
                                 <p class="text-dark-blue text-sm">{{
-                                    user?.company.cargos_statistics_year }}</p>
+                                    user?.company?.cargos_statistics_year }}</p>
                             </div>
                             <div class="flex flex-col gap-px whitespace-nowrap justify-end">
                                 <p class="text-[#8287AB] text-sm">Весь период</p>
                                 <p class="text-dark-blue text-sm">{{
-                                    user?.company.cargos_statistics_all_time }}</p>
+                                    user?.company?.cargos_statistics_all_time }}</p>
                             </div>
                         </div>
                     </div>
@@ -219,19 +235,19 @@ const copyToClipboard = (text) => {
                             <div class="flex flex-col gap-px whitespace-nowrap justify-end">
                                 <p class="text-[#8287AB] text-sm">Дата регистрации</p>
                                 <p class="text-dark-blue text-sm">{{
-                                    user?.company.registered_at }}</p>
+                                    user?.company?.registered_at }}</p>
                             </div>
                             <div class="flex flex-col gap-px whitespace-nowrap justify-end">
                                 <p class="text-[#8287AB] text-sm">Последний вход</p>
                                 <p class="text-dark-blue text-sm">{{
-                                    user?.company.last_login }}</p>
+                                    user?.company?.last_login }}</p>
                             </div>
                         </div>
                         <div class="flex justify-start gap-1">
                             <h2 class="font-semibold text-dark-blue text-base">Сотрудники</h2>
-                            <p class="text-base text-accent">{{ companyUsers.length }}</p>
+                            <p class="text-base text-accent">{{ companyUsers?.length }}</p>
                         </div>
-                        <div v-if="companyUsers.length === 0" class="text-accent font-semibold">
+                        <div v-if="companyUsers?.length === 0" class="text-accent font-semibold">
                             Сотрудники не найдены!
                         </div>
                         <div class="flex max-lg:flex-col justify-start gap-4 items-start">

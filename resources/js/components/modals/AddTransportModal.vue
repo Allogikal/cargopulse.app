@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { useForm, usePage } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import closeWhite from '@/assets/images/icons/close_white.svg'
@@ -25,8 +26,15 @@ const submitForm = () => {
     form.post(route('transport.store'), {
         preserveScroll: true,
         onSuccess: () => {
-            clearForm();
             componentEmit('close');
+            clearForm();
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Добавлен новый вид транспорта",
+                showConfirmButton: false,
+                timer: 1500
+            });
         },
         onError: (e) => {
             console.log(e)
@@ -40,7 +48,13 @@ const clearForm = () => {
 
 const saveFormToLocalStorage = () => {
     localStorage.setItem('transportFormData', JSON.stringify(formData));
-    alert('Форма сохранена как черновик')
+    Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Форма сохранена как черновик",
+        showConfirmButton: false,
+        timer: 1500
+    });
 }
 onMounted(() => {
     const savedData = localStorage.getItem('transportFormData');

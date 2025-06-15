@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import AddCompanyModal from '@/components/modals/AddCompanyModal.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { usePage, router } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import cancel from '@/assets/images/icons/cancel.svg'
@@ -61,7 +62,14 @@ const resetFilters = () => {
 const deleteCompany = (companyId) => {
     if (confirm('Вы уверены, что хотите удалить эту компанию?')) {
         router.delete(route('companies.destroy', companyId), {
-            onSuccess: () => { console.log('success') },
+            onSuccess: () => {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Компания удалена",
+                    showConfirmButton: false,
+                    timer: 2000
+                }); },
             onError: (errors) => {
                 console.error(errors)
             }

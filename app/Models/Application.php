@@ -29,7 +29,8 @@ class Application extends Model
         'customer',
         'loading_type',
         'body_type',
-        'status'
+        'status',
+        'company_id'
     ];
 
     public function company()

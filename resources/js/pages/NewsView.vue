@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import AddNewsModal from '@/components/modals/AddNewsModal.vue'
 import { usePage, router } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import placeholder_news from '@/assets/images/placeholder_news.webp'
@@ -41,7 +42,15 @@ const closeNewsModal = () => {
 const deleteNews = (newsItemId) => {
     if (confirm('Вы уверены, что хотите удалить эту новость?')) {
         router.delete(route('news.destroy', newsItemId), {
-            onSuccess: () => { console.log('success') },
+            onSuccess: () => { 
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Новость удалена!",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            },
             onError: (errors) => {
                 console.error(errors)
             }

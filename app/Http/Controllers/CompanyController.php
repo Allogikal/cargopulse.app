@@ -12,7 +12,7 @@ class CompanyController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|integer',
             'name' => 'required|string|max:255',
-            'inn' => 'required|integer|digits:12|unique:companies',
+            'inn' => 'required|unique:companies',
             'country' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'phone' => 'required|string|max:20',

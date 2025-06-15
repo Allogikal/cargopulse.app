@@ -3,6 +3,7 @@ import { ref } from 'vue'
 // IMAGES
 import placeholder from '@/assets/images/placeholder.webp'
 import closeWhite from '@/assets/images/icons/close_white.svg'
+import Swal from 'sweetalert2'
 
 const emit = defineEmits(['close', 'submit'])
 defineProps(['unassignedUsers'])
@@ -10,6 +11,13 @@ const selectedUser = ref(null)
 
 const submitForm = () => {
     if (!selectedUser.value) {
+        Swal.fire({
+            position: "top-end",
+            icon: "error",
+            title: "Выберите сотрудника!",
+            showConfirmButton: false,
+            timer: 2000
+        });
         return
     }
     emit('submit', selectedUser.value)

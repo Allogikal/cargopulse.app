@@ -48,7 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/add-employee', [ProfileController::class, 'addEmployee'])->name('add.employee');
     Route::put('/applications/{application}', [ApplicationsController::class, 'update']);
-        
+
     Route::get('/applications', function () {
         return Inertia::render('ApplicationsView', [
             'auth' => [
@@ -58,6 +58,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ]);
     })->name('applications');
 
+    Route::post('/applications/from-cargo', [ApplicationsController::class, 'storeFromCargo'])
+    ->name('applications.store.fromCargo');
+    
     Route::get('/cargos', function () {
         return Inertia::render('CargosView', [
             'auth' => [

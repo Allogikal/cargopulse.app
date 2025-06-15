@@ -48,5 +48,41 @@ class TransportTableSeeder extends Seeder
             'loading_type' => 'Тент',
             'body_type' => 'Тентованный кузов',
         ]);
+
+        Transport::create([
+            'user_id' => 3,
+            'number' => 'К333КК444',
+            'brand' => 'Iveco',
+            'year' => 2018,
+            'loading_type' => 'Бортовой',
+            'body_type' => 'Открытый борт',
+        ]);
+
+        Transport::create([
+            'user_id' => 1,
+            'number' => 'Н555НН666',
+            'brand' => 'Volvo',
+            'year' => 2023,
+            'loading_type' => 'Фургон',
+            'body_type' => 'Закрытый кузов',
+        ]);
+
+        Transport::create([
+            'user_id' => 2,
+            'number' => 'О777ОО888',
+            'brand' => 'DAF',
+            'year' => 2020,
+            'loading_type' => 'Платформа',
+            'body_type' => 'Открытая платформа',
+        ]);
+
+        Transport::create([
+            'user_id' => 3,
+            'number' => 'Р999РР000',
+            'brand' => 'Mercedes',
+            'year' => 2022,
+            'loading_type' => 'Рефрижератор',
+            'body_type' => 'Холодильный кузов',
+        ]);
     }
 }

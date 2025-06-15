@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, computed } from 'vue'
 import { useForm, usePage } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import closeWhite from '@/assets/images/icons/close_white.svg'
@@ -30,13 +31,29 @@ const form = useForm({
 })
 
 const submitForm = () => {
+    const componentEmit = emit;
+
     form.post(route('companies.store'), {
         preserveScroll: true,
         onSuccess: () => {
             clearForm();
-            emit('close');
+            componentEmit('close');
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Добавлена новая компания!",
+                showConfirmButton: false,
+                timer: 2000
+            });
         },
         onError: (e) => {
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "Ошибка создания новой компании!",
+                showConfirmButton: false,
+                timer: 2000
+            });
             console.log(e);
         }
     });
@@ -48,7 +65,13 @@ const clearForm = () => {
 
 const saveFormToLocalStorage = () => {
     localStorage.setItem('companyFormData', JSON.stringify(form.data()));
-    alert('Форма сохранена как черновик');
+    Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Форма сохранена как черновик",
+        showConfirmButton: false,
+        timer: 2000
+    });
 }
 
 onMounted(() => {

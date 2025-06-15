@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/layouts/AppLayout.vue'
 import { useForm } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 const form = useForm({
     email: '',
@@ -8,7 +9,37 @@ const form = useForm({
 })
 
 const submitForm = () => {
-    form.post(route('login'))
+    form.post(route('login'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Успешный вход",
+                showConfirmButton: false,
+                timer: 2000
+            });
+        },
+        onError: (errors) => {
+            if (errors.email) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: errors.email,
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+            } else {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Произошла ошибка. Проверьте правильность ввода.",
+                    showConfirmButton: false,
+                    timer: 2500
+                });
+            }
+        }
+    });
 }
 </script>
 

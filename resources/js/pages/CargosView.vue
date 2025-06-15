@@ -3,7 +3,8 @@ import { ref, computed } from 'vue'
 import TableRowsDetailsComponent from '@/components/TableRowsDetailsComponent.vue'
 import AddCargoModal from '@/components/modals/AddCargoModal.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
-import { usePage } from '@inertiajs/vue3'
+import { usePage, useForm } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import cancel from '@/assets/images/icons/cancel.svg'
@@ -101,6 +102,37 @@ const resetFilters = () => {
         has_nds: null,
         has_prepayment: null,
     }
+}
+
+const form = useForm({
+    cargo_id: null
+})
+
+const confirmApplication = (cargoId) => {
+    if (!confirm("Вы уверены, что хотите принять этот груз?")) return;
+    form.cargo_id = cargoId
+    form.post(route('applications.store.fromCargo'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Груз принят, проверьте заявки",
+                showConfirmButton: false,
+                timer: 2000
+            });
+            window.location.reload()
+        },
+        onError: (e) => {
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "Не удалось принять груз. Попробуйте позже.",
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+    })
 }
 </script>
 
@@ -383,6 +415,9 @@ const resetFilters = () => {
                             <th scope="col"
                                 class="px-6 py-3 text-start text-xs font-medium uppercase tracking-wider whitespace-nowrap">
                                 Заказчик</th>
+                            <th scope="col" v-if="user?.is_admin"
+                                class="px-6 py-3 text-start text-xs font-medium uppercase tracking-wider whitespace-nowrap">
+                                Управление</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-[#B2B2B2] overflow-y-auto text-[#424242]">
@@ -406,6 +441,12 @@ const resetFilters = () => {
                             <td class="px-6 py-2 whitespace-nowrap text-sm">
                                 <p class="font-semibold">{{ cargo.company.name }}</p>
                                 <p class="text-light-gray">{{ cargo.company.phone }}</p>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-light-gray">
+                                <button v-if="user?.position === 'Диспетчер' || user?.is_admin"
+                                    @click="confirmApplication(cargo.id)"
+                                    class="px-4 py-1 text-accent border border-accent outline-none rounded-2xl cursor-pointer">Принять
+                                    груз</button>
                             </td>
                         </tr>
                     </tbody>
@@ -439,6 +480,15 @@ const resetFilters = () => {
                         <p class="font-semibold mt-2">Заказчик</p>
                         <p class="font-semibold">{{ cargo.company.name }}</p>
                         <p class="text-light-gray">{{ cargo.company.phone }}</p>
+
+                        <p class="font-semibold mt-2" v-if="user?.position === 'Диспетчер' || user?.is_admin">Управление
+                        </p>
+                        <div class="px-6 py-4 whitespace-nowrap text-sm text-light-gray">
+                            <button v-if="user?.position === 'Диспетчер' || user?.is_admin"
+                                @click="confirmApplication(application.id)"
+                                class="px-4 py-1 text-accent border border-accent outline-none rounded-2xl cursor-pointer">Принять
+                                груз</button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import AddTransportModal from '@/components/modals/AddTransportModal.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { usePage, router } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import cancel from '@/assets/images/icons/cancel.svg'
@@ -67,8 +68,23 @@ const resetFilters = () => {
 const deleteTransport = (transportId) => {
     if (confirm('Вы уверены, что хотите удалить этот вид транспорта?')) {
         router.delete(route('transport.destroy', transportId), {
-            onSuccess: () => { console.log('success') },
+            onSuccess: () => {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Удален вид транспорта",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            },
             onError: (errors) => {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "Произошла ошибка",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 console.error(errors)
             }
         })

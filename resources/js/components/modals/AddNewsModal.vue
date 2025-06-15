@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import closeWhite from '@/assets/images/icons/close_white.svg'
@@ -36,8 +37,22 @@ const submitForm = () => {
         onSuccess: () => {
             clearForm();
             componentEmit('close');
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Опубликована новость!",
+                showConfirmButton: false,
+                timer: 2000
+            });
         },
         onError: (e) => {
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "Ошибка публикации!",
+                showConfirmButton: false,
+                timer: 2000
+            });
             console.error('Ошибка:', e)
         }
     });
@@ -51,7 +66,13 @@ const saveFormToLocalStorage = () => {
     delete formWithoutFile.avatar
 
     localStorage.setItem('newsFormData', JSON.stringify(formWithoutFile))
-    alert('Форма сохранена как черновик')
+    Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Форма сохранена как черновик",
+        showConfirmButton: false,
+        timer: 2000
+    });
 }
 onMounted(() => {
     const savedData = localStorage.getItem('newsFormData');
@@ -115,7 +136,7 @@ onMounted(() => {
                                     <input required type="file" @change="onAvatarChange" accept="image/*"
                                         class="w-full h-full absolute top-0 left-0 opacity-0 cursor-pointer" />
                                 </div>
-                                <p>Добавить фото</p>
+                                <p class="whitespace-nowrap">Добавить фото</p>
                             </div>
                             <div class="flex justify-end w-full">
                                 <div class="flex max-lg:flex-col max-lg:items-center pt-12 justify-end gap-4">

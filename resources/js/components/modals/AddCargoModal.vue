@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useForm, usePage } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import closeWhite from '@/assets/images/icons/close_white.svg'
@@ -70,21 +71,41 @@ watch(selectedUnloadingLocation, (newVal) => {
 });
 
 const submitForm = () => {
+    const componentEmit = emit;
+
     if (form.loading_date && form.unloading_date && new Date(form.loading_date) > new Date(form.unloading_date)) {
-        errors.value.date_error = 'Дата загрузки не может быть позже даты разгрузки';
+        Swal.fire({
+            position: "top-end",
+            icon: "error",
+            title: "Дата загрузки не может быть позже даты разгрузки",
+            showConfirmButton: false,
+            timer: 2000
+        });
+        componentEmit('close');
         return;
     }
-    delete errors.value.date_error;
-    const componentEmit = emit;
 
     form.post(route('cargos.store'), {
         preserveScroll: true,
         onSuccess: () => {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Добавлен новый груз",
+                showConfirmButton: false,
+                timer: 2000
+            });
             clearForm();
             componentEmit('close');
         },
         onError: (e) => {
-            errors.value = e;
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: "Ошибка создания груза",
+                showConfirmButton: false,
+                timer: 2000
+            });
         }
     });
 }
@@ -96,7 +117,13 @@ const clearForm = () => {
 
 const saveFormToLocalStorage = () => {
     localStorage.setItem('cargoFormData', JSON.stringify(form.data()));
-    alert('Форма сохранена как черновик');
+    Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Форма сохранена как черновик",
+        showConfirmButton: false,
+        timer: 1500
+    });
 }
 
 onMounted(() => {
@@ -284,8 +311,6 @@ onMounted(() => {
                                         class="w-auto px-6 py-3 text-xs text-white bg-accent rounded-full text-center whitespace-nowrap cursor-pointer">Опубликовать</button>
                                 </div>
                             </div>
-                            <small v-if="errors.date_error" class="text-accent p-2 border border-text-accent">{{
-                                errors.date_error }}</small>
                         </div>
                     </form>
                 </div>

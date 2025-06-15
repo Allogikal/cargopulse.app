@@ -84,6 +84,23 @@ class CompaniesTableSeeder extends Seeder
             'registered_at' => now()->subYear(),
             'last_login' => now(),
         ]);
-    }
 
+        Company::create([
+            'inn' => '7722334455',
+            'country' => 'Таджикистан',
+            'registration_address' => 'г. Душанбе, ул. Рудаки, д. 15',
+            'postal_address' => '734000, г. Душанбе, ул. Рудаки, д. 15',
+            'city' => 'Душанбе',
+            'email' => 'tj.logistics@example.com',
+            'name' => 'ООО "Самоход Таджик"',
+            'rate' => 45,
+            'phone' => '+992 98 765 43 21',
+            'activity' => 'Доставка по Центральной Азии',
+            'cargos_statistics_month' => 10,
+            'cargos_statistics_year' => 120,
+            'cargos_statistics_all_time' => 850,
+            'registered_at' => now()->subMonths(6),
+            'last_login' => now(),
+        ]);
+    }
 }

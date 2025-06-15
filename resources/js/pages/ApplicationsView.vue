@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { usePage } from '@inertiajs/vue3'
+import Swal from 'sweetalert2'
 
 // IMAGES
 import arrowWhite from '@/assets/images/icons/arrow_white.svg'
@@ -113,6 +114,13 @@ const updateStatus = async (application) => {
         await axios.put(`/applications/${application.id}`, {
             status: application.status,
         })
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Статус обновлен!",
+            showConfirmButton: false,
+            timer: 2000
+        });
     } catch (error) {
         console.error('Ошибка при обновлении статуса:', error)
     }
