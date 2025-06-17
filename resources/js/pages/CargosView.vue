@@ -38,8 +38,9 @@ const filters = ref({
     volume_from: null,
     volume_to: null,
     body_type: '',
-    has_nds: null,
-    has_prepayment: null,
+    loading_type: '',
+    nds: null,
+    prepayment: null
 })
 
 const filteredCargos = computed(() => {
@@ -74,12 +75,24 @@ const filteredCargos = computed(() => {
             match = false
         }
 
-        if (filters.value.has_nds !== null && cargo.has_nds !== filters.value.has_nds) {
-            match = false
+        if (filters.value.loading_type && cargo.loading_type !== filters.value.loading_type) {
+            match = false;
         }
 
-        if (filters.value.has_prepayment !== null && cargo.has_prepayment !== filters.value.has_prepayment) {
-            match = false
+        if (filters.value.nds !== null && cargo.nds !== Number(filters.value.nds === "true")) {
+            match = false;
+        }
+
+        if (filters.value.prepayment !== null && cargo.prepayment !== Number(filters.value.prepayment === "true")) {
+            match = false;
+        }
+
+        if (filters.value.price_from && cargo.price < filters.value.price_from) {
+            match = false;
+        }
+
+        if (filters.value.price_to && cargo.price > filters.value.price_to) {
+            match = false;
         }
 
         if (filters.value.company_search && !cargo.company.name.includes(filters.value.company_search)) {
@@ -99,8 +112,9 @@ const resetFilters = () => {
         volume_from: null,
         volume_to: null,
         body_type: '',
-        has_nds: null,
-        has_prepayment: null,
+        loading_type: '',
+        nds: null,
+        prepayment: null
     }
 }
 
@@ -350,38 +364,35 @@ const confirmApplication = (cargoId) => {
                                 <input placeholder="До" v-model.number="filters.price_to"
                                     class="text-light-gray border border-light-gray rounded-lg py-0.5 outline-none capitalize max-w-16 px-1"
                                     type="number" />
-                                <select v-model="filters.currency"
-                                    class="text-light-gray border border-light-gray rounded-lg px-2 py-1 outline-none cursor-pointer w-full uppercase"
-                                    name="#">
-                                    <option value="">Валюта</option>
-                                    <option value="RUB">RUB</option>
-                                    <option value="USD">USD</option>
+                                <select
+                                    class="text-light-gray border border-light-gray rounded-lg px-2 py-1 outline-none cursor-pointer w-full uppercase">
+                                    <option value="">RUB</option>
                                 </select>
                             </div>
                             <div class="flex items-start gap-4">
                                 <form class="flex flex-col justify-end gap-1 w-full">
                                     <p>НДС</p>
                                     <label class="flex items-center gap-2" for="attribute5">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute5"
-                                            v-model="filters.has_nds" value="true" />
+                                        <input class="rounded-full" type="radio" id="attribute5" v-model="filters.nds"
+                                            value="true" />
                                         С НДС
                                     </label>
                                     <label class="flex items-center gap-2" for="attribute6">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute6"
-                                            v-model="filters.has_nds" value="false" />
+                                        <input class="rounded-full" type="radio" id="attribute6" v-model="filters.nds"
+                                            value="false" />
                                         Без НДС
                                     </label>
                                 </form>
                                 <form class="flex flex-col justify-end gap-1 w-full">
                                     <p>Предоплата</p>
                                     <label class="flex items-center gap-2" for="attribute8">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute8"
-                                            v-model="filters.has_prepayment" value="true" />
+                                        <input class="rounded-full" type="radio" id="attribute8"
+                                            v-model="filters.prepayment" value="true" />
                                         Да
                                     </label>
                                     <label class="flex items-center gap-2" for="attribute9">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute9"
-                                            v-model="filters.has_prepayment" value="false" />
+                                        <input class="rounded-full" type="radio" id="attribute9"
+                                            v-model="filters.prepayment" value="false" />
                                         Нет
                                     </label>
                                 </form>
@@ -433,9 +444,9 @@ const confirmApplication = (cargoId) => {
                             </td>
                             <TableRowsDetailsComponent :cargo="cargo" />
                             <td class="px-6 py-2 whitespace-nowrap text-sm">
-                                <p class="font-semibold">{{ cargo.price }} {{ cargo.currency }} RUB</p>
-                                <p class="text-light-gray">{{ cargo.has_nds ? 'С НДС' : 'Без НДС' }}</p>
-                                <p class="text-light-gray">{{ cargo.has_prepayment ? 'С предоплатой' : 'Без предоплаты'
+                                <p class="font-semibold">{{ cargo.price }} {{ cargo.currency }} РУБ</p>
+                                <p class="text-light-gray">{{ cargo.nds ? 'С НДС' : 'Без НДС' }}</p>
+                                <p class="text-light-gray">{{ cargo.prepayment ? 'С предоплатой' : 'Без предоплаты'
                                     }}</p>
                             </td>
                             <td class="px-6 py-2 whitespace-nowrap text-sm">
@@ -473,7 +484,7 @@ const confirmApplication = (cargoId) => {
                         <p class="text-light-gray text-xs whitespace-normal">{{ cargo.additional_info }}</p>
 
                         <p class="font-semibold mt-2">Цена</p>
-                        <p class="font-semibold">{{ cargo.price }} {{ cargo.currency }}</p>
+                        <p class="font-semibold">{{ cargo.price }} РУБ</p>
                         <p class="text-light-gray">{{ cargo.has_nds ? 'С НДС' : 'Без НДС' }}</p>
                         <p class="text-light-gray">{{ cargo.has_prepayment ? 'С предоплатой' : 'Без предоплаты' }}</p>
 

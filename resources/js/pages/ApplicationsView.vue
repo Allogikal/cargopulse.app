@@ -36,63 +36,76 @@ const filters = ref({
     volume_from: null,
     volume_to: null,
     body_type: '',
-    has_nds: null,
-    has_prepayment: null,
-    company_search: '',
+    loading_type: '',
+    nds: null,
+    prepayment: null,
+    company_search: ''
 })
 
 const filteredApplications = computed(() => {
     return applications.value.filter(application => {
-        let match = true
+        let match = true;
 
         if (filters.value.loading_country && application.loading_country !== filters.value.loading_country) {
-            match = false
+            match = false;
         }
 
         if (filters.value.unloading_country && application.unloading_country !== filters.value.unloading_country) {
-            match = false
+            match = false;
         }
 
         if (filters.value.weight_from && application.weight_tons < filters.value.weight_from) {
-            match = false
+            match = false;
         }
 
         if (filters.value.weight_to && application.weight_tons > filters.value.weight_to) {
-            match = false
+            match = false;
         }
 
         if (filters.value.volume_from && application.volume_m3 < filters.value.volume_from) {
-            match = false
+            match = false;
         }
 
         if (filters.value.volume_to && application.volume_m3 > filters.value.volume_to) {
-            match = false
+            match = false;
         }
 
         if (filters.value.body_type && application.body_type !== filters.value.body_type) {
-            match = false
+            match = false;
         }
 
-        if (filters.value.has_nds !== null && application.has_nds !== filters.value.has_nds) {
-            match = false
+        if (filters.value.loading_type && application.loading_type !== filters.value.loading_type) {
+            match = false;
         }
 
-        if (filters.value.has_prepayment !== null && application.has_prepayment !== filters.value.has_prepayment) {
-            match = false
+        if (filters.value.nds !== null && application.nds !== Number(filters.value.nds === "true")) {
+            match = false;
         }
 
-        const searchValue = filters.value.company_search.trim().toLowerCase()
+        if (filters.value.prepayment !== null && application.prepayment !== Number(filters.value.prepayment === "true")) {
+            match = false;
+        }
+
+        if (filters.value.price_from && application.price < filters.value.price_from) {
+            match = false;
+        }
+
+        if (filters.value.price_to && application.price > filters.value.price_to) {
+            match = false;
+        }
+
+        const searchValue = filters.value.company_search.trim().toLowerCase();
         if (searchValue && ![
             application.company.id.toString().includes(searchValue),
             application.company.inn?.toString().includes(searchValue),
             application.company.name.toLowerCase().includes(searchValue)
         ].some(Boolean)) {
-            match = false
+            match = false;
         }
 
-        return match
-    })
-})
+        return match;
+    });
+});
 
 const resetFilters = () => {
     filters.value = {
@@ -103,9 +116,10 @@ const resetFilters = () => {
         volume_from: null,
         volume_to: null,
         body_type: '',
-        has_nds: null,
-        has_prepayment: null,
-        company_search: '',
+        loading_type: '',
+        nds: null,
+        prepayment: null,
+        company_search: ''
     }
 }
 
@@ -321,38 +335,35 @@ const updateStatus = async (application) => {
                                 <input placeholder="До" v-model.number="filters.price_to"
                                     class="text-light-gray border border-light-gray rounded-lg py-0.5 outline-none capitalize max-w-16 px-1"
                                     type="number" />
-                                <select v-model="filters.currency"
-                                    class="text-light-gray border border-light-gray rounded-lg px-2 py-1 outline-none cursor-pointer w-full uppercase"
-                                    name="#">
-                                    <option value="">Валюта</option>
-                                    <option value="RUB">RUB</option>
-                                    <option value="USD">USD</option>
+                                <select
+                                    class="text-light-gray border border-light-gray rounded-lg px-2 py-1 outline-none cursor-pointer w-full uppercase">
+                                    <option value="">RUB</option>
                                 </select>
                             </div>
                             <div class="flex items-start gap-4">
                                 <form class="flex flex-col justify-end gap-1 w-full">
                                     <p>НДС</p>
                                     <label class="flex items-center gap-2" for="attribute5">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute5"
-                                            v-model="filters.has_nds" value="true" />
+                                        <input class="rounded-full" type="radio" id="attribute5"
+                                            v-model="filters.nds" value="true" />
                                         С НДС
                                     </label>
                                     <label class="flex items-center gap-2" for="attribute6">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute6"
-                                            v-model="filters.has_nds" value="false" />
+                                        <input class="rounded-full" type="radio" id="attribute6"
+                                            v-model="filters.nds" value="false" />
                                         Без НДС
                                     </label>
                                 </form>
                                 <form class="flex flex-col justify-end gap-1 w-full">
                                     <p>Предоплата</p>
                                     <label class="flex items-center gap-2" for="attribute8">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute8"
-                                            v-model="filters.has_prepayment" value="true" />
+                                        <input class="rounded-full" type="radio" id="attribute8"
+                                            v-model="filters.prepayment" value="true" />
                                         Да
                                     </label>
                                     <label class="flex items-center gap-2" for="attribute9">
-                                        <input class="rounded-full" type="radio" name="#" id="attribute9"
-                                            v-model="filters.has_prepayment" value="false" />
+                                        <input class="rounded-full" type="radio" id="attribute9"
+                                            v-model="filters.prepayment" value="false" />
                                         Нет
                                     </label>
                                 </form>
@@ -418,7 +429,7 @@ const updateStatus = async (application) => {
                                             <p class="text-dark-blue text-xs font-normal">Тип перевозки: {{
                                                 application.body_type }}</p>
                                             <p class="text-light-gray text-xs">Тип загрузки: {{ application.loading_type
-                                            }}</p>
+                                                }}</p>
                                             <p class="text-light-gray text-xs">Доп. информация:</p>
                                             <p class="text-light-gray text-xs whitespace-normal">{{
                                                 application.additional_info }}</p>
@@ -427,19 +438,17 @@ const updateStatus = async (application) => {
                                 </div>
                             </td>
                             <td class="px-6 py-2 whitespace-nowrap text-sm">
-                                <p class="font-semibold">{{ application.price }} {{ application.currency }}</p>
-                                <p class="text-light-gray">{{ application.has_nds ? 'С НДС' : 'Без НДС' }}</p>
-                                <p class="text-light-gray">{{ application.has_prepayment ? 'С предоплатой' : 'Без предоплаты' }}</p>
+                                <p class="font-semibold">{{ application.price }} РУБ</p>
+                                <p class="text-light-gray">{{ application.nds ? 'С НДС' : 'Без НДС' }}</p>
+                                <p class="text-light-gray">{{ application.prepayment ? 'С предоплатой' : 'Без предоплаты' }}</p>
                             </td>
                             <td class="px-6 py-2 whitespace-nowrap text-sm">
                                 <p class="font-semibold">{{ application.company.name }}</p>
                                 <p class="text-light-gray">{{ application.company.phone }}</p>
                             </td>
                             <td class="px-6 py-2 whitespace-nowrap text-sm text-light-gray">
-                                <select 
-                                    v-if="user?.position === 'Диспетчер' || user?.is_admin" 
-                                    v-model="application.status" 
-                                    @change="updateStatus(application)"
+                                <select v-if="user?.position === 'Диспетчер' || user?.is_admin"
+                                    v-model="application.status" @change="updateStatus(application)"
                                     class="border-2 border-light-gray rounded-lg px-3 py-1 cursor-pointer">
                                     <option value="Доставлено">Доставлено</option>
                                     <option value="В пути">В пути</option>
@@ -467,19 +476,16 @@ const updateStatus = async (application) => {
                         </p>
 
                         <p class="font-semibold mt-2">Цена</p>
-                        <p class="font-semibold">{{ application.price }} {{ application.currency }}</p>
-                        <p class="text-light-gray">{{ application.has_nds ? 'С НДС' : 'Без НДС' }}</p>
-                        <p class="text-light-gray">{{ application.has_prepayment ? 'С предоплатой' : 'Без предоплаты' }}
-                        </p>
+                        <p class="font-semibold">{{ application.price }} РУБ</p>
+                        <p class="text-light-gray">{{ application.nds ? 'С НДС' : 'Без НДС' }}</p>
+                        <p class="text-light-gray">{{ application.prepayment ? 'С предоплатой' : 'Без предоплаты' }}</p>
 
                         <p class="font-semibold mt-2">Заказчик</p>
                         <p class="font-semibold">{{ application.company.name }}</p>
                         <p class="text-light-gray">{{ application.company.phone }}</p>
 
                         <p v-if="user?.position === 'Диспетчер'" class="font-semibold mt-2">Статус</p>
-                        <select 
-                            v-if="user?.position === 'Диспетчер' || user?.is_admin" 
-                            v-model="application.status" 
+                        <select v-if="user?.position === 'Диспетчер' || user?.is_admin" v-model="application.status"
                             @change="updateStatus(application)"
                             class="border-2 border-light-gray rounded-lg px-3 py-1 cursor-pointer">
                             <option value="Доставлено">Доставлено</option>
